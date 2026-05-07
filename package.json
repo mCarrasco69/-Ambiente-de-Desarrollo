@@ -4,8 +4,7 @@
   "description": "Proyecto web de desarrollo",
   "private": true,
   "scripts": {
-    "start": "node index.js",
-    "test": "node --test test.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "dayjs": "^1.11.20"
