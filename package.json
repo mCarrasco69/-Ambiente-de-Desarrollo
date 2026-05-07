@@ -5,7 +5,9 @@
   "private": true,
   "scripts": {
     "start": "node index.js",
-    "test": "node test.js"
+    "test": "node --test test.js"
   },
-  "dependencies": {    "dayjs": "^1.11.20"}
+  "dependencies": {
+    "dayjs": "^1.11.20"
+  }
 }

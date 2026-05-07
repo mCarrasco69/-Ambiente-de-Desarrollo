@@ -1,35 +1,51 @@
 const dayjs = require("dayjs");
 
-const Envio = {
-  pesoLb: 8,
-  distanciaKm: 260,
-};
+function validarNumeroNoNegativo(valor, nombreCampo) {
+  if (typeof valor !== "number" || Number.isNaN(valor) || valor < 0) {
+    throw new Error(`${nombreCampo} debe ser un numero no negativo.`);
+  }
+}
 
-const CondicionesEnvio = {
-  costoBase: 50,
-  limitePesoSinRecargo: 5,
-  recargoPorLibraExcedente: 20,
-  limiteDistanciaSinRecargo: 50,
-  recargoPorKmExcedente: 10,
-  diasProcesamiento: 2,
-  kmPorDiaTransporte: 100,
-};
+function validarEntrada(envio, condiciones) {
+  if (!envio || typeof envio !== "object") {
+    throw new Error("envio debe ser un objeto.");
+  }
 
-function CalculadoraEnvio
-(Envio,condiciones) {
-  const librasExcedentes = Math.max(0, Envio.pesoLb -condiciones.limitePesoSinRecargo);
-  const kmExcedentes = Math.max(0, Envio.distanciaKm -condiciones.limiteDistanciaSinRecargo);
+  if (!condiciones || typeof condiciones !== "object") {
+    throw new Error("condiciones debe ser un objeto.");
+  }
 
-  const recargoPeso = librasExcedentes *condiciones.recargoPorLibraExcedente;
-  const recargoDistancia = kmExcedentes *condiciones.recargoPorKmExcedente;
-  const costoTotal =condiciones.costoBase + recargoPeso + recargoDistancia;
+  validarNumeroNoNegativo(envio.pesoLb, "pesoLb");
+  validarNumeroNoNegativo(envio.distanciaKm, "distanciaKm");
+  validarNumeroNoNegativo(condiciones.costoBase, "costoBase");
+  validarNumeroNoNegativo(condiciones.limitePesoSinRecargo, "limitePesoSinRecargo");
+  validarNumeroNoNegativo(condiciones.recargoPorLibraExcedente, "recargoPorLibraExcedente");
+  validarNumeroNoNegativo(condiciones.limiteDistanciaSinRecargo, "limiteDistanciaSinRecargo");
+  validarNumeroNoNegativo(condiciones.recargoPorKmExcedente, "recargoPorKmExcedente");
+  validarNumeroNoNegativo(condiciones.diasProcesamiento, "diasProcesamiento");
+  validarNumeroNoNegativo(condiciones.kmPorDiaTransporte, "kmPorDiaTransporte");
 
-  const diasTransporte = Math.ceil(Envio.distanciaKm /condiciones.kmPorDiaTransporte);
-  const diasTotalesEntrega =condiciones.diasProcesamiento + diasTransporte;
+  if (condiciones.kmPorDiaTransporte === 0) {
+    throw new Error("kmPorDiaTransporte debe ser mayor que cero.");
+  }
+}
+
+function calcularEnvio(envio, condiciones) {
+  validarEntrada(envio, condiciones);
+
+  const librasExcedentes = Math.max(0, envio.pesoLb - condiciones.limitePesoSinRecargo);
+  const kmExcedentes = Math.max(0, envio.distanciaKm - condiciones.limiteDistanciaSinRecargo);
+
+  const recargoPeso = librasExcedentes * condiciones.recargoPorLibraExcedente;
+  const recargoDistancia = kmExcedentes * condiciones.recargoPorKmExcedente;
+  const costoTotal = condiciones.costoBase + recargoPeso + recargoDistancia;
+
+  const diasTransporte = Math.ceil(envio.distanciaKm / condiciones.kmPorDiaTransporte);
+  const diasTotalesEntrega = condiciones.diasProcesamiento + diasTransporte;
   const fechaEntregaEstimada = dayjs().add(diasTotalesEntrega, "day").format("YYYY-MM-DD");
 
   return {
-    ...Envio,
+    ...envio,
     librasExcedentes,
     kmExcedentes,
     recargoPeso,
@@ -41,5 +57,4 @@ function CalculadoraEnvio
   };
 }
 
-module.exports = { Envio, CondicionesEnvio, CalculadoraEnvio
- };
+module.exports = { calcularEnvio };
