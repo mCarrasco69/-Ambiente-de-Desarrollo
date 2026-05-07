@@ -1,0 +1,11 @@
+{
+  "name": "ambiente_de_desarollo",
+  "version": "1.0.0",
+  "description": "Proyecto web de desarrollo",
+  "private": true,
+  "scripts": {
+    "start": "node index.js",
+    "test": "node test.js"
+  },
+  "dependencies": {    "dayjs": "^1.11.20"}
+}
