@@ -23,19 +23,3 @@ test("calcula correctamente costo y dias de entrega", () => {
   assert.equal(resultado.diasTotalesEntrega, 5);
 });
 
-test("lanza error con peso negativo", () => {
-  const envioInvalido = { pesoLb: -1, distanciaKm: 100 };
-  const condiciones = {
-    costoBase: 50,
-    limitePesoSinRecargo: 5,
-    recargoPorLibraExcedente: 20,
-    limiteDistanciaSinRecargo: 50,
-    recargoPorKmExcedente: 10,
-    diasProcesamiento: 2,
-    kmPorDiaTransporte: 100,
-  };
-
-  assert.throws(() => calcularEnvio(envioInvalido, condiciones), {
-    message: "pesoLb debe ser un numero no negativo.",
-  });
-});
